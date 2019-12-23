@@ -17,10 +17,16 @@ function initCanvas(canvasEle: React.MutableRefObject<HTMLCanvasElement>) {
 /**
  * canvas 画鼠标圆
  */
-const CIRCLE_RADIUS = 1;
-function drawCircle(context: CanvasRenderingContext2D, mouse: Mouse) {
+const CIRCLE_RADIUS = 10;
+function drawCircle(context: CanvasRenderingContext2D, mouse: Mouse): void {
+	context.clearRect(
+		0,
+		0,
+		document.body.clientWidth,
+		document.body.clientHeight,
+	);
 	context.beginPath();
-	context.arc(mouse.getX(), mouse.getY(), CIRCLE_RADIUS, 0, Math.PI);
+	context.arc(mouse.getX(), mouse.getY(), CIRCLE_RADIUS, 0, Math.PI * 2);
 	context.closePath();
 	context.shadowColor = '#aaa';
 	context.shadowOffsetX = 2;

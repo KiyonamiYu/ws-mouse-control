@@ -37,7 +37,7 @@ function onTreeChecked(
 export default function View(props: ViewProps): JSX.Element {
 	const { children, mouseList, authModalVisible, setAuthModalVisible } = props;
 
-	const testArr = [new Mouse(1, 3, 1, 1), new Mouse(2, 4, 2, 2)];
+	// const testArr = [new Mouse(1, 3, 1, 1), new Mouse(2, 4, 2, 2)];
 
 	return (
 		<WsMouseControlPanel>
@@ -47,7 +47,7 @@ export default function View(props: ViewProps): JSX.Element {
 
 			<Modal
 				title="分配权限"
-				visible={!authModalVisible}
+				visible={authModalVisible}
 				onOk={(): void => {
 					checkedTreeKeys.forEach(key => {
 						const nums = key.split(TREE_KEY_SEPERATE);
@@ -63,7 +63,7 @@ export default function View(props: ViewProps): JSX.Element {
 				}}
 			>
 				<Tree checkable onCheck={onTreeChecked}>
-					{testArr.map(mouse => {
+					{mouseList.map(mouse => {
 						return (
 							<TreeNode title={mouse.getId()} key={`${mouse.getId()}`}>
 								{Object.values(MouseEventType).map(num =>
