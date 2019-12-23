@@ -20,7 +20,7 @@ export default class Mouse {
 		this.auths = [];
 	}
 
-	addAuth(auth: MouseEventType) {
+	addAuth(auth: MouseEventType): void {
 		this.auths.push(auth);
 	}
 
@@ -28,31 +28,31 @@ export default class Mouse {
 		return this.auths;
 	}
 
-	getId() {
+	getId(): number {
 		return this.id;
 	}
 
-	getX() {
+	getX(): number {
 		return this.x;
 	}
 
-	getY() {
+	getY(): number {
 		return this.y;
 	}
 
-	getColor() {
+	getColor(): string {
 		return this.color;
 	}
 
-	setX(x: number) {
+	setX(x: number): void {
 		this.x = x;
 	}
 
-	setY(y: number) {
+	setY(y: number): void {
 		this.y = y;
 	}
 
-	private randomColor() {
+	private randomColor(): string {
 		const digits = new Array<string>(6)
 			.fill('')
 			.map(() => Math.floor(Math.random() * 15).toString(16));
