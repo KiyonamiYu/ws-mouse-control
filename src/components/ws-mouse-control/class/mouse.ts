@@ -1,11 +1,12 @@
 import { C_SHARP_WIDTH, C_SHARP_HEIGHT } from '../constants';
-
+import MouseEventType from '../constants/mouse-event-type';
 export default class Mouse {
 	private id: number;
 	private type: number;
 	private color: string;
 	private x: number;
 	private y: number;
+	private auths: number[];
 
 	constructor(id: number, type: number, x: number, y: number) {
 		this.id = id;
@@ -15,6 +16,16 @@ export default class Mouse {
 		this.y = y / (C_SHARP_HEIGHT / document.body.clientHeight);
 
 		this.color = this.randomColor();
+
+		this.auths = [];
+	}
+
+	addAuth(auth: MouseEventType) {
+		this.auths.push(auth);
+	}
+
+	getAuths(): number[] {
+		return this.auths;
 	}
 
 	getId() {
