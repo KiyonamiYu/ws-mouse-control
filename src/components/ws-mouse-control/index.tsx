@@ -11,10 +11,10 @@ import Mouse from './class/mouse';
 import { WEBSOCKET_SITE } from './constants';
 import MouseEventType from './constants/mouse-event-type';
 
-function mouseLeftClick(mouseData: OriginMouse): void {
+function mouseLeftClick(nowMouse: Mouse): void {
 	const elements: Element[] = document.elementsFromPoint(
-		mouseData.x,
-		mouseData.y,
+		nowMouse.getX(),
+		nowMouse.getY(),
 	);
 
 	for (const element of elements) {
@@ -23,14 +23,15 @@ function mouseLeftClick(mouseData: OriginMouse): void {
 			const x2 = x1 + element.offsetWidth;
 			const y1 = element.offsetTop;
 			const y2 = y1 + element.offsetHeight;
+			console.log(element, x1, x2, y1, y2);
 			if (
-				mouseData.x >= x1 &&
-				mouseData.x <= x2 &&
-				mouseData.y >= y1 &&
-				mouseData.y <= y2
+				nowMouse.getX() >= x1 &&
+				nowMouse.getX() <= x2 &&
+				nowMouse.getY() >= y1 &&
+				nowMouse.getY() <= y2
 			) {
 				element.click();
-				break;
+				// break;
 			}
 		}
 	}
@@ -64,6 +65,10 @@ function setMouseListHOC(
 		result.push(nowMouse);
 	}
 	setMouseList(result);
+}
+
+function hasSpecialAuth(mouseList: Mouse[], mouseData: OriginMouse): boolean {
+	return mouseList.length > 0 && mouseData.id === mouseList[0].getId();
 }
 
 function wsOnOpen(client: w3cwebsocket): () => void {
@@ -102,7 +107,6 @@ export default function Container(props: ContainerProps): JSX.Element {
 		if (wsMessage === '') {
 			return;
 		}
-		console.log(wsMessage);
 		const mouseData: OriginMouse = JSON.parse(wsMessage);
 		const nowMouse: Mouse = getNowMouse(mouseList, mouseData);
 		switch (mouseData.type) {
@@ -114,14 +118,17 @@ export default function Container(props: ContainerProps): JSX.Element {
 				break;
 			// case 2 ：鼠标左击（需要权限）
 			case MouseEventType.MOUSE_LEFT_CLICK:
-				if (nowMouse.hasAuth(MouseEventType.MOUSE_LEFT_CLICK)) {
-					mouseLeftClick(mouseData);
+				if (
+					hasSpecialAuth(mouseList, mouseData) ||
+					nowMouse.hasAuth(MouseEventType.MOUSE_LEFT_CLICK)
+				) {
+					mouseLeftClick(nowMouse);
 				}
 				break;
 			// case 3 : 鼠标右击（需要权限）
 			case MouseEventType.MOUSE_RIGHT_CLICK:
 				// TODO 暂时只有第一个鼠标才有分配其他权限的权限
-				if (mouseList.length > 0 && mouseData.id === mouseList[0].getId()) {
+				if (hasSpecialAuth(mouseList, mouseData)) {
 					setAuthModalVisible(true);
 				}
 		}
