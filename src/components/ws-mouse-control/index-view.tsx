@@ -8,6 +8,8 @@ import Mouse from './class/mouse';
 const { TreeNode } = Tree;
 const TREE_KEY_SEPERATE = '-';
 
+let checkedTreeKeys: string[] = [];
+
 function getMouseEventTypeZh(num: MouseEventType): string {
 	switch (num) {
 		case MouseEventType.MOUSE_MOVE:
@@ -21,7 +23,29 @@ function getMouseEventTypeZh(num: MouseEventType): string {
 	}
 }
 
-let checkedTreeKeys: string[] = [];
+/**
+ * 获得节点的 key
+ * @param mouse
+ * @param authId
+ */
+function getAuthTreeKey(mouse: Mouse, authId: MouseEventType): string {
+	return `${mouse.getId()}${TREE_KEY_SEPERATE}${authId}`;
+}
+
+/**
+ * 初始化默认选中 key
+ * @param mouseList
+ */
+function getDefaultTreeCheckedKeys(mouseList: Mouse[]): string[] {
+	const defaultCheckedKeys: string[] = [];
+	for (const mouse of mouseList) {
+		for (const authId of mouse.getAuths()) {
+			defaultCheckedKeys.push(getAuthTreeKey(mouse, authId));
+		}
+	}
+	checkedTreeKeys = defaultCheckedKeys;
+	return defaultCheckedKeys;
+}
 
 function onTreeChecked(
 	checkedKeys:
@@ -34,10 +58,18 @@ function onTreeChecked(
 	checkedTreeKeys = checkedKeys as string[];
 }
 
+function getMouseById(mouseList: Mouse[], mouseIdStr: string): Mouse | null {
+	const mouseId = parseInt(mouseIdStr);
+	for (const mouse of mouseList) {
+		if (mouse.getId() === mouseId) {
+			return mouse;
+		}
+	}
+	return null;
+}
+
 export default function View(props: ViewProps): JSX.Element {
 	const { children, mouseList, authModalVisible, setAuthModalVisible } = props;
-
-	const testArr = [new Mouse(1, 3, 1, 1), new Mouse(2, 4, 2, 2)];
 
 	return (
 		<WsMouseControlPanel>
@@ -51,9 +83,12 @@ export default function View(props: ViewProps): JSX.Element {
 				onOk={(): void => {
 					checkedTreeKeys.forEach(key => {
 						const nums = key.split(TREE_KEY_SEPERATE);
-						console.log(nums);
 						if (nums.length === 1) {
 							return;
+						}
+						const mouse: Mouse = getMouseById(mouseList, nums[0]) as Mouse;
+						for (let i = 1; i < nums.length; i++) {
+							mouse.addAuth(parseInt(nums[i]));
 						}
 					});
 					setAuthModalVisible(false);
@@ -62,15 +97,19 @@ export default function View(props: ViewProps): JSX.Element {
 					setAuthModalVisible(false);
 				}}
 			>
-				<Tree checkable onCheck={onTreeChecked}>
-					{testArr.map(mouse => {
+				<Tree
+					checkable
+					onCheck={onTreeChecked}
+					defaultCheckedKeys={getDefaultTreeCheckedKeys(mouseList)}
+				>
+					{mouseList.map(mouse => {
 						return (
 							<TreeNode title={mouse.getId()} key={`${mouse.getId()}`}>
-								{Object.values(MouseEventType).map(num =>
-									typeof num !== 'string' ? (
+								{Object.values(MouseEventType).map(authId =>
+									typeof authId !== 'string' ? (
 										<TreeNode
-											title={getMouseEventTypeZh(num)}
-											key={`${mouse.getId()}${TREE_KEY_SEPERATE}${num}`}
+											title={getMouseEventTypeZh(authId)}
+											key={getAuthTreeKey(mouse, authId)}
 										/>
 									) : null,
 								)}

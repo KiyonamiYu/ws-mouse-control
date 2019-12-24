@@ -2,30 +2,45 @@ import { C_SHARP_WIDTH, C_SHARP_HEIGHT } from '../constants';
 import MouseEventType from '../constants/mouse-event-type';
 export default class Mouse {
 	private id: number;
-	private type: number;
 	private color: string;
 	private x: number;
 	private y: number;
 	private auths: number[];
 
-	constructor(id: number, type: number, x: number, y: number) {
+	constructor(id: number, x: number, y: number) {
 		this.id = id;
-		this.type = type;
 
 		this.x = x / (C_SHARP_WIDTH / document.body.clientWidth);
 		this.y = y / (C_SHARP_HEIGHT / document.body.clientHeight);
 
 		this.color = this.randomColor();
 
-		this.auths = [];
+		this.auths = [MouseEventType.MOUSE_MOVE];
 	}
 
-	addAuth(auth: MouseEventType): void {
-		this.auths.push(auth);
+	addAuth(authId: MouseEventType): void {
+		let foundFlag = false;
+		for (const auth of this.auths) {
+			if (auth === authId) {
+				foundFlag = true;
+			}
+		}
+		if (!foundFlag) {
+			this.auths.push(authId);
+		}
 	}
 
 	getAuths(): number[] {
 		return this.auths;
+	}
+
+	hasAuth(authId: MouseEventType): boolean {
+		for (const auth of this.auths) {
+			if (authId === auth) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	getId(): number {
@@ -49,6 +64,11 @@ export default class Mouse {
 	}
 
 	setY(y: number): void {
+		this.y = y;
+	}
+
+	setXY(x: number, y: number): void {
+		this.x = x;
 		this.y = y;
 	}
 

@@ -6,7 +6,9 @@ import Mouse from './class/mouse';
  * 初始化 canvas
  * @param canvasEle
  */
-function initCanvas(canvasEle: React.MutableRefObject<HTMLCanvasElement>) {
+function initCanvas(
+	canvasEle: React.MutableRefObject<HTMLCanvasElement>,
+): void {
 	// 初始化自定义层级
 	const canvas = canvasEle.current;
 	canvas.width = document.body.clientWidth;
@@ -18,7 +20,7 @@ function initCanvas(canvasEle: React.MutableRefObject<HTMLCanvasElement>) {
  * canvas 画鼠标圆
  */
 const CIRCLE_RADIUS = 1;
-function drawCircle(context: CanvasRenderingContext2D, mouse: Mouse) {
+function drawCircle(context: CanvasRenderingContext2D, mouse: Mouse): void {
 	context.beginPath();
 	context.arc(mouse.getX(), mouse.getY(), CIRCLE_RADIUS, 0, Math.PI);
 	context.closePath();
