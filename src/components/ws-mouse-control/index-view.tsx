@@ -79,7 +79,7 @@ export default function View(props: ViewProps): JSX.Element {
 
 			<Modal
 				title="分配权限"
-				visible={!authModalVisible}
+				visible={authModalVisible}
 				onOk={(): void => {
 					checkedTreeKeys.forEach(key => {
 						const nums = key.split(TREE_KEY_SEPERATE);

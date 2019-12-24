@@ -99,6 +99,9 @@ export default function Container(props: ContainerProps): JSX.Element {
 	}, []);
 
 	useEffect(() => {
+		if (wsMessage === '') {
+			return;
+		}
 		console.log(wsMessage);
 		const mouseData: OriginMouse = JSON.parse(wsMessage);
 		const nowMouse: Mouse = getNowMouse(mouseList, mouseData);
